@@ -18,6 +18,7 @@ defmodule Mix.Tasks.Staker do
     [@validator, @validator_group]
     |> Enum.map(&Account.get_available_dollars/1)
     |> Enum.map(&Account.exchange_dollars_for_gold/1)
+    |> Enum.map(&Account.get_available_gold/1)
 
     output = """
     > Converted all available dollars to gold!

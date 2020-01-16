@@ -3,9 +3,12 @@ defmodule Cello.Account do
   alias Decimal, as: D
 
   @min_dollar_balance "2000000000000000000"
+  @min_gold_balance "2000000000000000000"
 
   def get_available_dollars(account) when is_binary(account) do
     {:ok, result} = Shell.run("celocli", ["account:balance", account])
+
+    IO.puts(result)
 
     amount =
       result
@@ -16,6 +19,24 @@ defmodule Cello.Account do
 
     case D.cmp(amount, @min_dollar_balance) do
       :gt -> {account, D.sub(amount, @min_dollar_balance)}
+      _ -> {account, "0"}
+    end
+  end
+
+  def get_available_gold(account) do
+    {:ok, result} = Shell.run("celocli", ["account:balance", account])
+
+    IO.puts(result)
+
+    amount =
+      result
+      |> String.split("\n", trim: true)
+      |> List.delete_at(0)
+      |> Enum.map(&parse_balance/1)
+      |> gold_amount()
+
+    case D.cmp(amount, @min_gold_balance) do
+      :gt -> {account, D.sub(amount, @min_gold_balance)}
       _ -> {account, "0"}
     end
   end
@@ -52,6 +73,13 @@ defmodule Cello.Account do
     amounts
     |> Enum.filter(&Map.has_key?(&1, :usd))
     |> Enum.map(fn %{usd: amount} -> amount end)
+    |> List.first()
+  end
+
+  defp gold_amount(amounts) when is_list(amounts) do
+    amounts
+    |> Enum.filter(&Map.has_key?(&1, :gold))
+    |> Enum.map(fn %{gold: amount} -> amount end)
     |> List.first()
   end
 end
