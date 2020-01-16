@@ -7,17 +7,29 @@ defmodule Cello.Account do
   def get_available_dollars(account) when is_binary(account) do
     {:ok, result} = Shell.run("celocli", ["account:balance", account])
 
-    balance =
+    amount =
       result
       |> String.split("\n", trim: true)
       |> List.delete_at(0)
       |> Enum.map(&parse_balance/1)
       |> dollar_amount()
 
-    case D.cmp(balance, @min_dollar_balance) do
-      :gt -> D.sub(balance, @min_dollar_balance)
-      _ -> D.new("0")
+    case D.cmp(amount, @min_dollar_balance) do
+      :gt -> {account, D.sub(amount, @min_dollar_balance)}
+      _ -> {account, "0"}
     end
+  end
+
+  def exchange_dollars_for_gold({account, "0"}) when is_binary(account) do
+    account
+  end
+
+  def exchange_dollars_for_gold({account, amount}) when is_binary(account) do
+    {:ok, result} =
+      Shell.run("celocli", ["exchange:dollars", "--from=#{account}", "--value=#{amount}"])
+
+    IO.puts(result)
+    account
   end
 
   defp parse_balance("gold: " <> amount) do

@@ -15,15 +15,12 @@ defmodule Mix.Tasks.Staker do
   """
 
   def run(_args) do
-    dollar_balances =
-      [@validator, @validator_group]
-      |> Enum.map(&Account.get_available_dollars/1)
+    [@validator, @validator_group]
+    |> Enum.map(&Account.get_available_dollars/1)
+    |> Enum.map(&Account.exchange_dollars_for_gold/1)
 
     output = """
-
-    > Balances:
-    >   #{List.first(dollar_balances)}
-    >   #{List.last(dollar_balances)}
+    > Converted all available dollars to gold!
     """
 
     Mix.shell().info(output)
