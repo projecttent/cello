@@ -7,7 +7,8 @@ defmodule Cello.MixProject do
       version: "0.1.0",
       elixir: "~> 1.9",
       start_permanent: Mix.env() == :prod,
-      deps: deps()
+      deps: deps(),
+      aliases: aliases()
     ]
   end
 
@@ -22,6 +23,12 @@ defmodule Cello.MixProject do
   defp deps do
     [
       {:decimal, "~> 1.0"}
+    ]
+  end
+
+  defp aliases do
+    [
+      stake: "staker"
     ]
   end
 end
