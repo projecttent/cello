@@ -50,11 +50,12 @@ defmodule Cello.Account do
       Shell.run("celocli", ["exchange:dollars", "--from=#{account}", "--value=#{amount}"])
 
     IO.puts(result)
+
     account
   end
 
-  def lock_gold({account, "0"}) when is_binary(account) do
-    account
+  def lock_gold({account, "0" = amount}) when is_binary(account) do
+    {account, amount}
   end
 
   def lock_gold({account, amount}) when is_binary(account) do
@@ -64,7 +65,8 @@ defmodule Cello.Account do
       Shell.run("celocli", ["lockedgold:lock", "--from=#{account}", "--value=#{amount}"])
 
     IO.puts(result)
-    account
+
+    {account, amount}
   end
 
   defp parse_balance("gold: " <> amount) do
