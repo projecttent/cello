@@ -2,8 +2,8 @@ defmodule Cello.Account do
   alias Cello.Shell
   alias Decimal, as: D
 
-  @min_dollar_balance "2000000000000000000"
-  @min_gold_balance "2000000000000000000"
+  @min_dollar_balance "4000000000000000000"
+  @min_gold_balance "4000000000000000000"
 
   def get_available_dollars(account) when is_binary(account) do
     {:ok, result} = Shell.run("celocli", ["account:balance", account])
